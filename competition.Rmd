@@ -8,8 +8,37 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
+#packges    
+```{r packages}
+library(readxl)
+library(xlsx)
+
+library(lubridate)
+library(ggplot2)
+library(forecast)  
+library(Kendall)
+library(tseries)
+library(outliers)
+
+library(tidyverse)
+library(smooth)
+library(zoo)
+library(kableExtra)
+
+```
+
 #Data
 ```{r}
+#temperature
+raw_temperature <- read_excel("Competition/Data/temperature.xlsx")
+colnames(raw_temperature) 
+
+##transfer hourly to daily
+temperature_day <- raw_temperature %>% 
+  group_by(date) %>% 
+  summarize(across(starts_with("t_ws"), mean, na.rm = TRUE))
+##test result use first day of t_ws1
+mean(raw_temperature$t_ws1[c(1:24)])
 
 ```
 
