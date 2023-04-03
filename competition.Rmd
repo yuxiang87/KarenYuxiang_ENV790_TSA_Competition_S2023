@@ -12,7 +12,7 @@ editor_options:
 ```{r packages}
 library(readxl)
 library(xlsx)
-
+library(tidyr)
 library(lubridate)
 library(ggplot2)
 library(forecast)  
@@ -28,6 +28,7 @@ library(kableExtra)
 ```
 
 #Data
+##temperature
 ```{r}
 #temperature
 raw_temperature <- read_excel("Competition/Data/temperature.xlsx")
@@ -39,10 +40,60 @@ temperature_day <- raw_temperature %>%
   summarize(across(starts_with("t_ws"), mean, na.rm = TRUE))
 ##test result use first day of t_ws1
 mean(raw_temperature$t_ws1[c(1:24)])
+##save
+write.csv(temperature_day, row.names = FALSE, 
+          file = "./Competition/Data/temperature_day.csv")
+```
+## load
+```{r}
+#load
+raw_load <- read_excel("Competition/Data/load.xlsx")
+colnames(raw_load) 
+## i guess h1 ~h24 mean hours,
+## transfer hourly to daily
+load_day_long <- raw_load %>%
+  pivot_longer(cols = starts_with("h"),
+               names_to = "hour",
+               values_to = "energy")
+load_day <- load_day_long %>% 
+  group_by(date) %>% 
+  summarize(energy = sum(energy))# use sum
+
+##test
+sum(load_day_long$energy[1:24])
+
+##save
+write.csv(load_day, row.names = FALSE, 
+          file = "./Competition/Data/load_day.csv")
+```
+
+##humidity
+```{r}
+#humidity
+raw_humidity <- read_excel("Competition/Data/relative_humidity.xlsx")
+colnames(raw_humidity) 
+##transfer hourly to daily
+humidity_day <- raw_humidity %>% 
+  group_by(date) %>% 
+  summarize(across(starts_with("rh_ws"), mean, na.rm = TRUE))
+##test result use first day of t_ws1
+mean(raw_humidity$rh_ws1[c(1:24)])
+##save
+write.csv(humidity_day, row.names = FALSE, 
+          file = "./Competition/Data/humidity_day.csv")
+```
+
+##final data
+**to save space i save the result data, you can only run after this chunk to load data. or we can add "#" before these r chunk**
+```{r}
+load_day <- read.csv("./Competition/Data/load_day.csv")
+temperature_day <- read.csv("./Competition/Data/temperature_day.csv")
+humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
 
 ```
 
 #Test_Karen
+
 
 
 #Test_Yuxiang
