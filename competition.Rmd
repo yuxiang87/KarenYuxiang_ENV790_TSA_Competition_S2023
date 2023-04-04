@@ -115,6 +115,10 @@ autoplot(ts_load_daily) +
     autolayer(Simple_ARIMA_for,series="ARIMA",PI=FALSE) +
     ylab("Load") +
     xlab("")
+
+#save
+write.csv(Simple_ARIMA_for, row.names = FALSE, 
+          file = "./Competition/Data/Simple.ARIMA.Forecast.csv")
 ```
 
 #Test_Karen
