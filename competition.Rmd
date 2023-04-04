@@ -101,6 +101,17 @@ ts_load_daily <- msts(load_day$energy,
                            start=c(2005,1,1))
 ```
 
+#create an arima
+```{r}
+#arima with only one factor
+Simple_ARIMA <- auto.arima(ts_load_daily, seasonal=FALSE)
+print(Simple_ARIMA)
+
+#this is wrong, I need to fix it
+#simple arima forecast
+#Simple_ARIMA_for <- forecast(Simple_ARIMA, xreg=fourier(ts_load_daily), h=365)
+```
+
 #Test_Karen
 
 
