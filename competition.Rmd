@@ -11,7 +11,7 @@ editor_options:
 #packges    
 ```{r packages}
 library(readxl)
-library(xlsx)
+library(xlsx) #this package doesn't work on Macs very well
 library(tidyr)
 library(lubridate)
 library(ggplot2)
@@ -59,6 +59,8 @@ load_day <- load_day_long %>%
   group_by(date) %>% 
   summarize(energy = sum(energy))# use sum
 
+#why sum and not average here?
+
 ##test
 sum(load_day_long$energy[1:24])
 
@@ -86,9 +88,9 @@ write.csv(humidity_day, row.names = FALSE,
 ##final data
 **to save space i save the result data, you can only run after this chunk to load data. or we can add "#" before these r chunk**
 ```{r}
-load_day <- read.csv("./Competition/Data/load_day.csv")
-temperature_day <- read.csv("./Competition/Data/temperature_day.csv")
-humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
+#load_day <- read.csv("./Competition/Data/load_day.csv")
+#temperature_day <- read.csv("./Competition/Data/temperature_day.csv")
+#humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
 
 ```
 
