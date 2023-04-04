@@ -11,7 +11,7 @@ editor_options:
 #packges    
 ```{r packages}
 library(readxl)
-library(xlsx) #this package doesn't work on Macs very well
+#library(xlsx) #this package doesn't work on Macs very well
 library(tidyr)
 library(lubridate)
 library(ggplot2)
@@ -107,9 +107,14 @@ ts_load_daily <- msts(load_day$energy,
 Simple_ARIMA <- auto.arima(ts_load_daily, seasonal=FALSE)
 print(Simple_ARIMA)
 
-#this is wrong, I need to fix it
 #simple arima forecast
-#Simple_ARIMA_for <- forecast(Simple_ARIMA, xreg=fourier(ts_load_daily), h=365)
+Simple_ARIMA_for <- forecast(object = Simple_ARIMA, h=365)
+
+#plot
+autoplot(ts_load_daily) +
+    autolayer(Simple_ARIMA_for,series="ARIMA",PI=FALSE) +
+    ylab("Load") +
+    xlab("")
 ```
 
 #Test_Karen
