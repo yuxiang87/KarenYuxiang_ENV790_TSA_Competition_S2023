@@ -1,6 +1,6 @@
 ---
 title: "TSA: Forecasting Competition "
-author: ""
+author: "Yuxiang Ren and Karen Thornton"
 output: pdf_document
 always_allow_html: true
 editor_options: 
