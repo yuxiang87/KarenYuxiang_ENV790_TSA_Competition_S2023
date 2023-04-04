@@ -57,9 +57,9 @@ load_day_long <- raw_load %>%
                values_to = "energy")
 load_day <- load_day_long %>% 
   group_by(date) %>% 
-  summarize(energy = sum(energy))# use sum
+  summarize(energy = mean(energy))# use mean
 
-#why sum and not average here?
+#changed to mean 
 
 ##test
 sum(load_day_long$energy[1:24])
@@ -101,6 +101,7 @@ ts_load_daily <- msts(load_day$energy,
                            start=c(2005,1,1))
 ```
 
+#Test_Karen
 #create an arima
 ```{r}
 #arima with only one factor
@@ -118,10 +119,9 @@ autoplot(ts_load_daily) +
 
 #save
 write.csv(Simple_ARIMA_for, row.names = FALSE, 
-          file = "./Competition/Data/Simple.ARIMA.Forecast.csv")
+          file = "./Competition/Data/Simple.ARIMA.Forecast.mean.csv")
 ```
 
-#Test_Karen
 
 
 
