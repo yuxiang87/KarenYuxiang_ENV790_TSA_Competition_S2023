@@ -127,8 +127,8 @@ write.csv(Simple_ARIMA_for, row.names = FALSE,
 ```{r}
 NN_fit <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,12)))
 
-NN_for <- forecast(NN_fit, h=365,xreg=fourier(ts_load_daily, 
-                                          K=c(2,12),h=365))
+NN_for <- forecast(NN_fit, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,12),h=59))
 
 #plot
 autoplot(ts_load_daily) +
@@ -136,7 +136,7 @@ autoplot(ts_load_daily) +
   ylab("Load") 
 
 #save
-write.csv(Simple_ARIMA_for, row.names = FALSE, 
+write.csv(NN_for, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.csv")
 ```
 
