@@ -140,6 +140,23 @@ write.csv(NN_for, row.names = FALSE,
           file = "./Competition/Data/Neural.Network.Forecast.csv")
 ```
 
+#Test_Karen_3
+#Neural Network 2
+```{r}
+NN_fit_2 <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,7)))
+
+NN_for_2 <- forecast(NN_fit_2, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,7),h=59))
+
+#plot
+autoplot(ts_load_daily) +
+  autolayer(NN_for_2, series="Neural Network 2",PI=FALSE)+
+  ylab("Load") 
+
+#save
+write.csv(NN_for_2, row.names = FALSE, 
+          file = "./Competition/Data/Neural.Network.Forecast.2.csv")
+```
 
 #Test_Yuxiang
 
