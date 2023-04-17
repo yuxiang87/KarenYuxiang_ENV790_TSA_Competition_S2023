@@ -24,6 +24,7 @@ library(tidyverse)
 library(smooth)
 library(zoo)
 library(kableExtra)
+library(dplyr)
 
 ```
 
@@ -98,6 +99,22 @@ humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
 ```{r}
 ts_load_daily <- msts(load_day$energy, 
                            seasonal.periods =c(7,365.25),
+                           start=c(2005,1,1))
+
+load_day_fill <- na.approx(load_day$energy)
+ts_load_daily_fill <- msts(load_day_fill, 
+                           seasonal.periods =c(7,365.25),
+                           start=c(2005,1,1))
+
+data_seq_YR <- seq(from = as.Date("2011-01-01"), to = as.Date("2011-02-28"), by = "day")
+
+#ts_temperature
+##mean temperature
+temp <- temperature_day %>%
+  group_by(date) %>%
+  summarise(T = mean(c_across(starts_with("t_ws")), na.rm = TRUE))
+
+ts_temp <- msts(temp,seasonal.periods =c(7,365.25),
                            start=c(2005,1,1))
 ```
 
@@ -371,5 +388,94 @@ cat("Best P:", best_P, "\n")
 cat("Minimum MSE:", min_MSE, "\n")
 
 
+```
+
+##Neural_Network, for non-seasonal
+i forget there should no k
+```{r NN, non-seasonal,k(2,12)}
+## remove seansaol
+stl_decomposition <- stl(ts_load_daily_fill, s.window = "periodic", robust = TRUE)
+seasonal_component <- stl_decomposition$time.series[, "seasonal"]
+deseasonalized_data <- ts_load_daily_fill - seasonal_component
+
+set.seed(6787)
+NN_fit_deseasonalized_212 <- nnetar(deseasonalized_data, p = 1, P = 0, K = c(2, 12))
+NN_forecast_deseasonalized_212 <- forecast(NN_fit_deseasonalized_212, h = 59)
+
+forecast_seasonal_component <- window(seasonal_component, start = c(2010, 1), end = c(2010, 59))
+
+
+df <- data.frame(date = data_seq_YR, load1 = NN_forecast_deseasonalized_212$mean)
+df2 <- data.frame(load2 = forecast_seasonal_component)
+df3 <- cbind(df,df2) 
+df3$load <- df3$load1 + df3$load2
+
+df <- data.frame(date = as.Date(data_seq_YR), load1 = coredata(df$load1))
+df2 <- data.frame(load2 = coredata(df2$load2))
+
+df3 <- cbind(df, df2)
+df3$load <- df3$load1 + df3$load2
+df3 <- df3[,c(1,4)]
+write.csv(df3, row.names = FALSE, 
+          file = "./Competition/Data/NN.deseason.212.6768.csv")
+
+```
+
+##Neural_Network, for non-seasonal
+p= 2,P = 0
+```{r NN, non-seasonal,k(2,2)}
+## remove seansaol
+stl_decomposition <- stl(ts_load_daily_fill, s.window = "periodic", robust = TRUE)
+seasonal_component <- stl_decomposition$time.series[, "seasonal"]
+deseasonalized_data <- ts_load_daily_fill - seasonal_component
+
+set.seed(6787)
+NN_fit_deseasonalized_212 <- nnetar(deseasonalized_data, p = 2, P = 0)
+NN_forecast_deseasonalized_212 <- forecast(NN_fit_deseasonalized_212, h = 59)
+
+forecast_seasonal_component <- window(seasonal_component, start = c(2010, 1), end = c(2010, 59))
+
+
+df <- data.frame(date = data_seq_YR, load1 = NN_forecast_deseasonalized_212$mean)
+df2 <- data.frame(load2 = forecast_seasonal_component)
+df3 <- cbind(df,df2) 
+
+df <- data.frame(date = as.Date(data_seq_YR), load1 = coredata(df$load1))
+df2 <- data.frame(load2 = coredata(df2$load2))
+
+df3 <- cbind(df, df2)
+df3$load <- df3$load1 + df3$load2
+df3 <- df3[,c(1,4)]
+write.csv(df3, row.names = FALSE, 
+          file = "./Competition/Data/NN.deseason.p2.6768.csv")
+
+```
+
+#NN+temp
+
+```{r}
+set.seed(6787)
+deseasonalized_data_temp <- cbind(deseasonalized_data, ts_temp)
+
+arima_fit_deseasonalized_temp <- auto.arima(deseasonalized_data_temp[, 1],
+                                            xreg = as.matrix(deseasonalized_data_temp[, 3]),
+                                            seasonal = FALSE)
+xreg <- deseasonalized_data_temp[(nrow(deseasonalized_data_temp)-58):nrow(deseasonalized_data_temp), 3]
+
+forecast_deseasonalized_T <- forecast(arima_fit_deseasonalized_temp, xreg = xreg, h = 59)
+
+
+df <- data.frame(date = data_seq_YR, load1 = forecast_deseasonalized_T$mean)
+df2 <- data.frame(load2 = forecast_seasonal_component)
+df3 <- cbind(df,df2) 
+
+df <- data.frame(date = as.Date(data_seq_YR), load1 = coredata(df$load1))
+df2 <- data.frame(load2 = coredata(df2$load2))
+
+df3 <- cbind(df, df2)
+df3$load <- df3$load1 + df3$load2
+df3 <- df3[,c(1,4)]
+write.csv(df3, row.names = FALSE, 
+          file = "./Competition/Data/NN.deseason.Temp.6768.csv")
 ```
 
