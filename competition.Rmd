@@ -333,5 +333,43 @@ Neural.Network.22.1234.YR_df <- data.frame(date = data_seq_YR, load = NN_for_4_Y
 write.csv(Neural.Network.22.1234.YR_df, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.22.seed1234.csv")
 
+```
+##Neural_Network, find the best pPK.
+this code can not work yet
+```{r}
+#replace NA
+load_day_fill <- na.approx(load_day$energy)
+ts_load_daily_fill <- msts(load_day_fill, 
+                           seasonal.periods =c(7,365.25),
+                           start=c(2005,1,1))
+ts_data_train <- window(ts_load_daily_fill, start=c(2005, 1), end=c(2009, 365))
+
+ts_data_test <- window(ts_load_daily_fill, start=c(2010, 1), end=c(2010, 365))
+
+min_MSE <- Inf
+best_p <- 0
+best_P <- 0
+# Loop through different combinations of p, P, and K
+for (p in 0:3) {
+  for (P in 0:3) {
+        # Fit the model with the current combination of parameters
+       NN_fit <- nnetar(ts_data_train, p=p, P=P, xreg=fourier(ts_data_train, K=c(2,12)))
+       NN_for_temp <- forecast(NN_fit, h = 365, xreg=fourier(ts_data_test, K = c(2,12), h = 365))
+
+       current_MSE <- mean((ts_data_test - NN_for_temp$mean)^2)
+
+        if (current_MSE < min_MSE) {
+          min_MSE <- current_MSE
+          best_p <- p
+          best_P <- P
+        }
+      }
+    }
+
+cat("Best p:", best_p, "\n")
+cat("Best P:", best_P, "\n")
+cat("Minimum MSE:", min_MSE, "\n")
+
 
 ```
+
