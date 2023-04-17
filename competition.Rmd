@@ -102,7 +102,7 @@ ts_load_daily <- msts(load_day$energy,
 ```
 
 #Test_Karen
-#create an arima
+##create an arima
 ```{r}
 #arima with only one factor
 Simple_ARIMA <- auto.arima(ts_load_daily, seasonal=FALSE)
@@ -123,7 +123,7 @@ write.csv(Simple_ARIMA_for, row.names = FALSE,
 ```
 
 #Test_Karen_2
-#Neural Network
+##Neural Network
 ```{r}
 NN_fit <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,12)))
 
@@ -141,7 +141,7 @@ write.csv(NN_for, row.names = FALSE,
 ```
 
 #Test_Karen_3
-#Neural Network 2
+##Neural Network 2
 ```{r}
 NN_fit_2 <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,7)))
 
@@ -159,12 +159,179 @@ write.csv(NN_for_2, row.names = FALSE,
 ```
 
 #Test_Yuxiang
+##STL + ETS
+```{r STL+ETS}
+ETS_fit_YR <-  stlf(ts_load_daily,h=59)
+autoplot(ETS_fit_YR)
+STL_ETS_YR <- ETS_fit_YR$mean
 
+#save
 
-#Result_Model
-##1
-```{r}
+data_seq_YR <- seq(from = as.Date("2011-01-01"), to = as.Date("2011-02-28"), by = "day")
+STL_ETS_YR_df <- data.frame(date = data_seq_YR, load = STL_ETS_YR)
+
+write.csv(STL_ETS_YR_df, row.names = FALSE, 
+          file = "./Competition/Data/STL.ETS.Forecast.csv")
 
 ```
 
-##2
+##ARIMA + FOURIER terms
+loop take long time, the best K values is (2,2)
+```{r ARIMA.FOURIER}
+
+min_AICc <- Inf
+best_K <- c(0, 0)
+
+for (k1 in 1:2) {
+  for (k2 in 1:20) { # Change the range of k2 to a smaller value for testing
+    ARIMA_Four_fit_temp <- auto.arima(ts_load_daily,
+                                      seasonal=FALSE,
+                                      lambda=0,
+                                      xreg=fourier(ts_load_daily,
+                                                   K=c(k1, k2))
+                                      )
+    current_AICc <- ARIMA_Four_fit_temp$aicc
+    
+    cat("k1: ", k1, " k2: ", k2, " AICc: ", current_AICc, "\n")
+    
+    if (current_AICc < min_AICc) {
+      min_AICc <- current_AICc
+      best_K <- c(k1, k2)
+    }
+  }
+}
+
+print(paste0("Best K values: (", best_K[1], ", ", best_K[2], ")"))
+print(paste0("Minimum AICc: ", min_AICc))
+
+ARIMA_Four_fit_YR <- auto.arima(ts_load_daily, 
+                             seasonal=FALSE, 
+                             lambda=0,
+                             xreg=fourier(ts_load_daily, 
+                                          K=best_K)
+                             )
+
+ARIMA_Four_for_YR <- forecast(ARIMA_Four_fit_YR,
+                           xreg=fourier(ts_load_daily,
+                                        K=best_K,
+                                        h=59),
+                           h=59
+                           ) 
+
+#save
+ARIMA_Four_YR <- ARIMA_Four_for_YR$mean
+data_seq_YR <- seq(from = as.Date("2011-01-01"), to = as.Date("2011-02-28"), by = "day")
+ARIMA_Four_YR_df <- data.frame(date = data_seq_YR, load = ARIMA_Four_YR)
+
+write.csv(ARIMA_Four_YR_df, row.names = FALSE, 
+          file = "./Competition/Data/ARIMA.FOUR.Forecast.csv")
+
+#re-test k = 2, 12
+ARIMA_Four_fit2_YR <- auto.arima(ts_load_daily, 
+                             seasonal=FALSE, 
+                             lambda=0,
+                             xreg=fourier(ts_load_daily, 
+                                          K=c(2,12))
+                             )
+
+ARIMA_Four_for2_YR <- forecast(ARIMA_Four_fit2_YR,
+                           xreg=fourier(ts_load_daily,
+                                        K=c(2,12),
+                                        h=59),
+                           h=59
+                           ) 
+
+#save
+ARIMA_Four2_YR <- ARIMA_Four_for2_YR$mean
+data_seq_YR <- seq(from = as.Date("2011-01-01"), to = as.Date("2011-02-28"), by = "day")
+ARIMA_Four2_YR_df <- data.frame(date = data_seq_YR, load = ARIMA_Four2_YR)
+
+write.csv(ARIMA_Four2_YR_df, row.names = FALSE, 
+          file = "./Competition/Data/ARIMA.FOUR2.Forecast.csv")
+
+```
+
+##TBATS
+```{r}
+TBATS_fit1_YR <- tbats(ts_load_daily)
+TBATS_for1 <- forecast(TBATS_fit1_YR, h=59)
+autoplot(TBATS_for1) +
+  ylab("Active Power") # too small, not report
+
+
+#replace NA, might wrong
+ts_full_YR <- approx(ts_load_daily, method = "linear")
+TBATS_fit2_YR <- tbats(ts_full_YR$y)
+TBATS_for2 <- forecast(TBATS_fit_YR, h=59)
+autoplot(TBATS_for2) +
+  ylab("Active Power") 
+
+
+```
+
+##Neural_Network
+same code as your NN2, but set seed 
+```{r Neural_Network}
+set.seed(6787)
+NN_fit_2_YR <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,7)))
+
+NN_for_2_YR <- forecast(NN_fit_2_YR, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,7),h=59))
+
+#plot
+autoplot(ts_load_daily) +
+  autolayer(NN_for_2_YR, series="Neural Network 2",PI=FALSE)+
+  ylab("Load") 
+
+#save
+Neural.Network.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_for_2_YR$mean)
+
+write.csv(Neural.Network.6787.YR_df, row.names = FALSE, 
+          file = "./Competition/Data/Neural.Network.Forecast.seed6787.2.csv")
+
+
+```
+##Neural_Network, k= 2,2
+maybe need setseed
+```{r Neural_Network(2,2)1}
+set.seed(6787)
+NN_fit_3_YR <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,2)))
+
+NN_for_3_YR <- forecast(NN_fit_3_YR, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,2),h=59))
+
+#plot
+autoplot(ts_load_daily) +
+  autolayer(NN_for_3_YR, series="Neural Network 3",PI=FALSE)+
+  ylab("Load") 
+
+#save
+Neural.Network.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_for_3_YR$mean)
+
+write.csv(Neural.Network.22.6787.YR_df, row.names = FALSE, 
+          file = "./Competition/Data/Neural.Network.Forecast.22.seed6787.csv")
+
+
+```
+##Neural_Network, k= 2,2
+seed = 1234
+```{r Neural_Network(2,2)2}
+set.seed(1234)
+NN_fit_4_YR <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,2)))
+
+NN_for_4_YR <- forecast(NN_fit_4_YR, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,2),h=59))
+
+#plot
+autoplot(ts_load_daily) +
+  autolayer(NN_for_4_YR, series="Neural Network 3",PI=FALSE)+
+  ylab("Load") 
+
+#save
+Neural.Network.22.1234.YR_df <- data.frame(date = data_seq_YR, load = NN_for_4_YR$mean)
+
+write.csv(Neural.Network.22.1234.YR_df, row.names = FALSE, 
+          file = "./Competition/Data/Neural.Network.Forecast.22.seed1234.csv")
+
+
+```
