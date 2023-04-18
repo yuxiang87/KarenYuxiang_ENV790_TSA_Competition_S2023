@@ -116,6 +116,8 @@ temp <- temperature_day %>%
 
 ts_temp <- msts(temp,seasonal.periods =c(7,365.25),
                            start=c(2005,1,1))
+acf(load_day_fill)
+pacf(load_day_fill)
 ```
 
 #Test_Karen
@@ -308,6 +310,7 @@ write.csv(Neural.Network.6787.YR_df, row.names = FALSE,
 
 
 ```
+
 ##Neural_Network, k= 2,2
 maybe need setseed
 ```{r Neural_Network(2,2)1}
@@ -479,3 +482,55 @@ write.csv(df3, row.names = FALSE,
           file = "./Competition/Data/NN.deseason.Temp.6768.csv")
 ```
 
+##Neural_Network, k= 2,2,p=2
+maybe need setseed
+```{r Neural_Network(2,2)p=2}
+set.seed(6787)
+NN_fit_p2_YR <- nnetar(ts_load_daily,p=2,P=0,xreg=fourier(ts_load_daily, K=c(2,2)))
+
+NN_forp2_YR <- forecast(NN_fit_p2_YR, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,2),h=59))
+
+
+#save
+Neural.Network.p2.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_forp2_YR$mean)
+
+write.csv(Neural.Network.p2.22.6787.YR_df, row.names = FALSE, 
+          file = "./Competition/Data/Neural.Network.Forecast.p2.22.seed6787.csv")
+
+
+```
+##Neural_Network, k= 2,2,p=1,P=1
+maybe need setseed
+```{r Neural_Network(2,2)p1P1}
+set.seed(6787)
+NN_fit_p1P1_YR <- nnetar(ts_load_daily,p=1,P=1,xreg=fourier(ts_load_daily, K=c(2,2)))
+
+NN_for_p1P1_YR <- forecast(NN_fit_p1P1_YR, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,2),h=59))
+
+
+#save
+Neural.Network.p1P1.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_for_p1P1_YR$mean)
+
+write.csv(Neural.Network.p1P1.22.6787.YR_df, row.names = FALSE, 
+          file = "./Competition/Data/Neural.Network.Forecast.p1P1.22.seed6787.csv")
+
+```
+##Neural_Network, k= 2,2,p=1,P=4
+maybe need setseed
+```{r Neural_Network(2,2)p=1,P4}
+set.seed(6787)
+NN_fit_p1P4_YR <- nnetar(ts_load_daily,p=1,P=4,xreg=fourier(ts_load_daily, K=c(2,2)))
+
+NN_for_p1P4_YR <- forecast(NN_fit_p1P4_YR, h=59,xreg=fourier(ts_load_daily, 
+                                          K=c(2,2),h=59))
+
+
+#save
+Neural.Network.p1P4.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_for_p1P4_YR$mean)
+
+write.csv(Neural.Network.p1P4.22.6787.YR_df, row.names = FALSE, 
+          file = "./Competition/Data/Neural.Network.Forecast.p1P4.22.seed6787.csv")
+
+```
