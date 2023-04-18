@@ -30,7 +30,7 @@ library(dplyr)
 
 #Data
 ##temperature
-```{r}
+```{r raw data_Temp eval=FALSE, include=FALSE}
 #temperature
 raw_temperature <- read_excel("Competition/Data/temperature.xlsx")
 colnames(raw_temperature) 
@@ -46,7 +46,7 @@ write.csv(temperature_day, row.names = FALSE,
           file = "./Competition/Data/temperature_day.csv")
 ```
 ## load
-```{r}
+```{r rawdata_load eval=FALSE, include=FALSE}
 #load
 raw_load <- read_excel("Competition/Data/load.xlsx")
 colnames(raw_load) 
@@ -71,7 +71,7 @@ write.csv(load_day, row.names = FALSE,
 ```
 
 ##humidity
-```{r}
+```{r rawdata_humidity eval=FALSE, include=FALSE}
 #humidity
 raw_humidity <- read_excel("Competition/Data/relative_humidity.xlsx")
 colnames(raw_humidity) 
@@ -88,7 +88,7 @@ write.csv(humidity_day, row.names = FALSE,
 
 ##final data
 **to save space i save the result data, you can only run after this chunk to load data. or we can add "#" before these r chunk**
-```{r}
+```{r final data message=FALSE, warning=FALSE}
 load_day <- read.csv("./Competition/Data/load_day.csv")
 temperature_day <- read.csv("./Competition/Data/temperature_day.csv")
 humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
@@ -96,7 +96,7 @@ humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
 ```
 
 #create a time series
-```{r}
+```{r ts, message=FALSE, warning=FALSE}
 ts_load_daily <- msts(load_day$energy, 
                            seasonal.periods =c(7,365.25),
                            start=c(2005,1,1))
@@ -105,9 +105,8 @@ load_day_fill <- na.approx(load_day$energy)
 ts_load_daily_fill <- msts(load_day_fill, 
                            seasonal.periods =c(7,365.25),
                            start=c(2005,1,1))
-
-data_seq_YR <- seq(from = as.Date("2011-01-01"), to = as.Date("2011-02-28"), by = "day")
-
+acf(load_day_fill)
+pacf(load_day_fill)
 #ts_temperature
 ##mean temperature
 temp <- temperature_day %>%
@@ -116,8 +115,8 @@ temp <- temperature_day %>%
 
 ts_temp <- msts(temp,seasonal.periods =c(7,365.25),
                            start=c(2005,1,1))
-acf(load_day_fill)
-pacf(load_day_fill)
+#for result generate
+data_seq_YR <- seq(from = as.Date("2011-01-01"), to = as.Date("2011-02-28"), by = "day")
 ```
 
 #Test_Karen
@@ -501,7 +500,7 @@ write.csv(Neural.Network.p2.22.6787.YR_df, row.names = FALSE,
 
 ```
 ##Neural_Network, k= 2,2,p=1,P=1
-maybe need setseed
+
 ```{r Neural_Network(2,2)p1P1}
 set.seed(6787)
 NN_fit_p1P1_YR <- nnetar(ts_load_daily,p=1,P=1,xreg=fourier(ts_load_daily, K=c(2,2)))
@@ -518,8 +517,8 @@ write.csv(Neural.Network.p1P1.22.6787.YR_df, row.names = FALSE,
 
 ```
 ##Neural_Network, k= 2,2,p=1,P=4
-maybe need setseed
-```{r Neural_Network(2,2)p=1,P4}
+
+```{r Neural_Network(2, message=FALSE, warning=FALSE, 2)p=1}
 set.seed(6787)
 NN_fit_p1P4_YR <- nnetar(ts_load_daily,p=1,P=4,xreg=fourier(ts_load_daily, K=c(2,2)))
 
