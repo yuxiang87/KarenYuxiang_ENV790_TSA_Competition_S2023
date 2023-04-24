@@ -43,6 +43,7 @@ mean(raw_temperature$t_ws1[c(1:24)])
 write.csv(temperature_day, row.names = FALSE, 
           file = "./Competition/Data/temperature_day.csv")
 ```
+
 ## load
 ```{r rawdata_load eval=FALSE, include=FALSE}
 #load
@@ -88,7 +89,6 @@ write.csv(humidity_day, row.names = FALSE,
 load_day <- read.csv("./Competition/Data/load_day.csv")
 temperature_day <- read.csv("./Competition/Data/temperature_day.csv")
 humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
-
 ```
 
 #create a time series
@@ -182,7 +182,6 @@ STL_ETS_YR_df <- data.frame(date = data_seq_YR, load = STL_ETS_YR)
 
 write.csv(STL_ETS_YR_df, row.names = FALSE, 
           file = "./Competition/Data/STL.ETS.Forecast.csv")
-
 ```
 
 ##ARIMA + FOURIER terms
@@ -258,7 +257,6 @@ ARIMA_Four2_YR_df <- data.frame(date = data_seq_YR, load = ARIMA_Four2_YR)
 
 write.csv(ARIMA_Four2_YR_df, row.names = FALSE, 
           file = "./Competition/Data/ARIMA.FOUR2.Forecast.csv")
-
 ```
 
 ##TBATS
@@ -275,8 +273,6 @@ TBATS_fit2_YR <- tbats(ts_full_YR$y)
 TBATS_for2 <- forecast(TBATS_fit_YR, h=59)
 autoplot(TBATS_for2) +
   ylab("Active Power") 
-
-
 ```
 
 ##Neural_Network
@@ -298,8 +294,6 @@ Neural.Network.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_for_2_YR$m
 
 write.csv(Neural.Network.6787.YR_df, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.seed6787.2.csv")
-
-
 ```
 
 ##Neural_Network, k= 2,2
@@ -321,8 +315,6 @@ Neural.Network.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_for_3_Y
 
 write.csv(Neural.Network.22.6787.YR_df, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.22.seed6787.csv")
-
-
 ```
 
 ##Neural_Network, k= 2,2
@@ -344,7 +336,6 @@ Neural.Network.22.1234.YR_df <- data.frame(date = data_seq_YR, load = NN_for_4_Y
 
 write.csv(Neural.Network.22.1234.YR_df, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.22.seed1234.csv")
-
 ```
 
 ##Neural_Network, find the best pPK.
@@ -382,8 +373,6 @@ for (p in 0:3) {
 cat("Best p:", best_p, "\n")
 cat("Best P:", best_P, "\n")
 cat("Minimum MSE:", min_MSE, "\n")
-
-
 ```
 
 ##Neural_Network, for non-seasonal
@@ -414,7 +403,6 @@ df3$load <- df3$load1 + df3$load2
 df3 <- df3[,c(1,4)]
 write.csv(df3, row.names = FALSE, 
           file = "./Competition/Data/NN.deseason.212.6768.csv")
-
 ```
 
 ##Neural_Network, for non-seasonal
@@ -444,7 +432,6 @@ df3$load <- df3$load1 + df3$load2
 df3 <- df3[,c(1,4)]
 write.csv(df3, row.names = FALSE, 
           file = "./Competition/Data/NN.deseason.p2.6768.csv")
-
 ```
 
 ##Arima+temp
@@ -489,8 +476,6 @@ Neural.Network.p2.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_forp
 
 write.csv(Neural.Network.p2.22.6787.YR_df, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.p2.22.seed6787.csv")
-
-
 ```
 
 ##Neural_Network, k= 2,2,p=1,P=1
@@ -507,7 +492,6 @@ Neural.Network.p1P1.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_fo
 
 write.csv(Neural.Network.p1P1.22.6787.YR_df, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.p1P1.22.seed6787.csv")
-
 ```
 
 ##Neural_Network, k= 2,2,p=1,P=4
@@ -524,5 +508,4 @@ Neural.Network.p1P4.22.6787.YR_df <- data.frame(date = data_seq_YR, load = NN_fo
 
 write.csv(Neural.Network.p1P4.22.6787.YR_df, row.names = FALSE, 
           file = "./Competition/Data/Neural.Network.Forecast.p1P4.22.seed6787.csv")
-
 ```
