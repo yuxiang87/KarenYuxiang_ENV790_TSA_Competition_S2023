@@ -115,7 +115,6 @@ ts_temp <- msts(temp,seasonal.periods =c(7,365.25),
 data_seq_YR <- seq(from = as.Date("2011-01-01"), to = as.Date("2011-02-28"), by = "day")
 ```
 
-#Test_Karen
 ##create an arima
 ```{r}
 #arima with only one factor
@@ -136,7 +135,6 @@ write.csv(Simple_ARIMA_for, row.names = FALSE,
           file = "./Competition/Data/Simple.ARIMA.Forecast.mean.csv")
 ```
 
-#Test_Karen_2
 ##Neural Network
 ```{r}
 NN_fit <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,12)))
@@ -154,7 +152,6 @@ write.csv(NN_for, row.names = FALSE,
           file = "./Competition/Data/Neural.Network.Forecast.csv")
 ```
 
-#Test_Karen_3
 ##Neural Network 2
 ```{r}
 NN_fit_2 <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,7)))
@@ -172,7 +169,6 @@ write.csv(NN_for_2, row.names = FALSE,
           file = "./Competition/Data/Neural.Network.Forecast.2.csv")
 ```
 
-#Test_Yuxiang
 ##STL + ETS
 ```{r STL+ETS}
 ETS_fit_YR <-  stlf(ts_load_daily,h=59)
@@ -328,6 +324,7 @@ write.csv(Neural.Network.22.6787.YR_df, row.names = FALSE,
 
 
 ```
+
 ##Neural_Network, k= 2,2
 seed = 1234
 ```{r Neural_Network(2,2)2}
@@ -349,6 +346,7 @@ write.csv(Neural.Network.22.1234.YR_df, row.names = FALSE,
           file = "./Competition/Data/Neural.Network.Forecast.22.seed1234.csv")
 
 ```
+
 ##Neural_Network, find the best pPK.
 this code can not work yet
 ```{r}
@@ -450,7 +448,6 @@ write.csv(df3, row.names = FALSE,
 ```
 
 ##Arima+temp
-
 ```{r}
 set.seed(6787)
 deseasonalized_data_temp <- cbind(deseasonalized_data, ts_temp)
@@ -495,8 +492,8 @@ write.csv(Neural.Network.p2.22.6787.YR_df, row.names = FALSE,
 
 
 ```
-##Neural_Network, k= 2,2,p=1,P=1
 
+##Neural_Network, k= 2,2,p=1,P=1
 ```{r Neural_Network(2,2)p1P1}
 set.seed(6787)
 NN_fit_p1P1_YR <- nnetar(ts_load_daily,p=1,P=1,xreg=fourier(ts_load_daily, K=c(2,2)))
@@ -512,8 +509,8 @@ write.csv(Neural.Network.p1P1.22.6787.YR_df, row.names = FALSE,
           file = "./Competition/Data/Neural.Network.Forecast.p1P1.22.seed6787.csv")
 
 ```
-##Neural_Network, k= 2,2,p=1,P=4
 
+##Neural_Network, k= 2,2,p=1,P=4
 ```{r Neural_Network(2, message=FALSE, warning=FALSE, 2)p=1}
 set.seed(6787)
 NN_fit_p1P4_YR <- nnetar(ts_load_daily,p=1,P=4,xreg=fourier(ts_load_daily, K=c(2,2)))
