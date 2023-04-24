@@ -276,7 +276,7 @@ autoplot(TBATS_for2) +
 ```
 
 ##Neural_Network
-same code as your NN2, but set seed 
+same code as NN2, but set seed 
 ```{r Neural_Network}
 set.seed(6787)
 NN_fit_2_YR <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,7)))
@@ -297,7 +297,7 @@ write.csv(Neural.Network.6787.YR_df, row.names = FALSE,
 ```
 
 ##Neural_Network, k= 2,2
-maybe need setseed
+seed 6787 k 22
 ```{r Neural_Network(2,2)1}
 set.seed(6787)
 NN_fit_3_YR <- nnetar(ts_load_daily,p=1,P=0,xreg=fourier(ts_load_daily, K=c(2,2)))
@@ -339,7 +339,7 @@ write.csv(Neural.Network.22.1234.YR_df, row.names = FALSE,
 ```
 
 ##Neural_Network, find the best pPK.
-this code can not work yet
+this code can not work 
 ```{r}
 #replace NA
 load_day_fill <- na.approx(load_day$energy)
@@ -435,7 +435,7 @@ write.csv(df3, row.names = FALSE,
 ```
 
 ##Arima+temp
-```{r}
+```{r Arima+temp}
 set.seed(6787)
 deseasonalized_data_temp <- cbind(deseasonalized_data, ts_temp)
 
@@ -462,7 +462,7 @@ write.csv(df3, row.names = FALSE,
 ```
 
 ##Neural_Network, k= 2,2,p=2
-maybe need setseed
+
 ```{r Neural_Network(2,2)p=2}
 set.seed(6787)
 NN_fit_p2_YR <- nnetar(ts_load_daily,p=2,P=0,xreg=fourier(ts_load_daily, K=c(2,2)))
@@ -495,7 +495,7 @@ write.csv(Neural.Network.p1P1.22.6787.YR_df, row.names = FALSE,
 ```
 
 ##Neural_Network, k= 2,2,p=1,P=4
-```{r Neural_Network(2, message=FALSE, warning=FALSE, 2)p=1}
+```{r Neural_Network(2,2)p=1P4}
 set.seed(6787)
 NN_fit_p1P4_YR <- nnetar(ts_load_daily,p=1,P=4,xreg=fourier(ts_load_daily, K=c(2,2)))
 
