@@ -8,7 +8,7 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
-   
+#packages
 ```{r packages, message=FALSE, warning=FALSE, include=FALSE}
 #packges 
 library(readxl)
@@ -28,7 +28,7 @@ library(dplyr)
 
 #Data
 ##temperature
-```{r raw data_Temp eval=FALSE, include=FALSE}
+```{r raw data_Temp, eval=FALSE}
 #temperature
 raw_temperature <- read_excel("Competition/Data/temperature.xlsx")
 colnames(raw_temperature) 
@@ -45,7 +45,7 @@ write.csv(temperature_day, row.names = FALSE,
 ```
 
 ## load
-```{r rawdata_load eval=FALSE, include=FALSE}
+```{r eval=FALSE}
 #load
 raw_load <- read_excel("Competition/Data/load.xlsx")
 colnames(raw_load) 
@@ -68,7 +68,7 @@ write.csv(load_day, row.names = FALSE,
 ```
 
 ##humidity
-```{r rawdata_humidity eval=FALSE, include=FALSE}
+```{r eval=FALSE}
 #humidity
 raw_humidity <- read_excel("Competition/Data/relative_humidity.xlsx")
 colnames(raw_humidity) 
@@ -84,8 +84,8 @@ write.csv(humidity_day, row.names = FALSE,
 ```
 
 ##final data
-**to save space i save the result data, you can only run after this chunk to load data. or we can add "#" before these r chunk**
-```{r final data message=FALSE, warning=FALSE}
+**to save space i save the result data, and use eval = FALSE in chunk obove.
+```{r final data, message=FALSE, warning=FALSE}
 load_day <- read.csv("./Competition/Data/load_day.csv")
 temperature_day <- read.csv("./Competition/Data/temperature_day.csv")
 humidity_day <- read.csv("./Competition/Data/humidity_day.csv")
@@ -186,7 +186,7 @@ write.csv(STL_ETS_YR_df, row.names = FALSE,
 
 ##ARIMA + FOURIER terms
 loop take long time, the best K values is (2,2)
-```{r ARIMA.FOURIER}
+```{r ARIMA.FOURIER, eval=FALSE, message=FALSE, warning=FALSE}
 
 min_AICc <- Inf
 best_K <- c(0, 0)
@@ -260,18 +260,18 @@ write.csv(ARIMA_Four2_YR_df, row.names = FALSE,
 ```
 
 ##TBATS
-```{r}
-TBATS_fit1_YR <- tbats(ts_load_daily)
-TBATS_for1 <- forecast(TBATS_fit1_YR, h=59)
-autoplot(TBATS_for1) +
+```{r TBATS}
+TBATS_fit_YR <- tbats(ts_load_daily)
+TBATS_for <- forecast(TBATS_fit_YR, h=59)
+autoplot(TBATS_for) +
   ylab("Active Power") # too small, not report
 
 
 #replace NA, might wrong
 ts_full_YR <- approx(ts_load_daily, method = "linear")
-TBATS_fit2_YR <- tbats(ts_full_YR$y)
-TBATS_for2 <- forecast(TBATS_fit_YR, h=59)
-autoplot(TBATS_for2) +
+TBATS_fit_YR <- tbats(ts_full_YR$y)
+TBATS_for <- forecast(TBATS_fit_YR, h=59)
+autoplot(TBATS_for) +
   ylab("Active Power") 
 ```
 
@@ -340,7 +340,7 @@ write.csv(Neural.Network.22.1234.YR_df, row.names = FALSE,
 
 ##Neural_Network, find the best pPK.
 this code can not work 
-```{r}
+```{r eval=FALSE}
 #replace NA
 load_day_fill <- na.approx(load_day$energy)
 ts_load_daily_fill <- msts(load_day_fill, 
@@ -392,8 +392,6 @@ forecast_seasonal_component <- window(seasonal_component, start = c(2010, 1), en
 
 df <- data.frame(date = data_seq_YR, load1 = NN_forecast_deseasonalized_212$mean)
 df2 <- data.frame(load2 = forecast_seasonal_component)
-df3 <- cbind(df,df2) 
-df3$load <- df3$load1 + df3$load2
 
 df <- data.frame(date = as.Date(data_seq_YR), load1 = coredata(df$load1))
 df2 <- data.frame(load2 = coredata(df2$load2))
@@ -463,7 +461,7 @@ write.csv(df3, row.names = FALSE,
 
 ##Neural_Network, k= 2,2,p=2
 
-```{r Neural_Network(2,2)p=2}
+```{r Neural_Network(2,2)p2}
 set.seed(6787)
 NN_fit_p2_YR <- nnetar(ts_load_daily,p=2,P=0,xreg=fourier(ts_load_daily, K=c(2,2)))
 
@@ -495,7 +493,7 @@ write.csv(Neural.Network.p1P1.22.6787.YR_df, row.names = FALSE,
 ```
 
 ##Neural_Network, k= 2,2,p=1,P=4
-```{r Neural_Network(2,2)p=1P4}
+```{r Neural_Network(2,2)p1P4}
 set.seed(6787)
 NN_fit_p1P4_YR <- nnetar(ts_load_daily,p=1,P=4,xreg=fourier(ts_load_daily, K=c(2,2)))
 
